@@ -4,8 +4,8 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "build": "echo 'Build not needed - using tsx'",
+    "start": "tsx src/server.ts",
     "test": "vitest run"
   },
   "dependencies": {
