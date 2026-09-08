@@ -1,0 +1,81 @@
+services:
+  # API Service (Fastify REST API + SSE)
+  - type: web
+    name: lead-research-api
+    runtime: node
+    region: oregon
+    plan: starter
+    branch: main
+    buildCommand: npm install && npm run db:generate && npm run build --workspace=apps/api
+    startCommand: npm run start --workspace=apps/api
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lead-research-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: lead-research-redis
+          property: connectionString
+      - key: DEMO_MODE
+        value: true
+      - key: CORS_ORIGIN
+        sync: false
+      - key: API_AUTH_TOKEN
+        sync: false
+      - key: SEARCH_API_KEY
+        sync: false
+      - key: ENRICHMENT_API_KEY
+        sync: false
+
+  # Worker Service (BullMQ job processor)
+  - type: worker
+    name: lead-research-worker
+    runtime: node
+    region: oregon
+    plan: starter
+    branch: main
+    buildCommand: npm install && npm run db:generate && npm run build --workspace=apps/worker
+    startCommand: npm run start --workspace=apps/worker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lead-research-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: lead-research-redis
+          property: connectionString
+      - key: DEMO_MODE
+        value: true
+      - key: WORKER_CONCURRENCY
+        value: 2
+      - key: SEARCH_API_KEY
+        sync: false
+      - key: ENRICHMENT_API_KEY
+        sync: false
+
+databases:
+  # PostgreSQL Database
+  - name: lead-research-db
+    databaseName: lead_research_engine
+    user: lre
+    region: oregon
+    plan: starter
+    postgresMajorVersion: 16
+
+  # Redis Instance (for BullMQ job queue)
+  - name: lead-research-redis
+    region: oregon
+    plan: starter
+    maxmemoryPolicy: noeviction
+    ipAllowList: []

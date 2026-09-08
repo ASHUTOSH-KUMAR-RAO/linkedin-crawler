@@ -1,0 +1,12 @@
+{
+  "name": "@lre/export",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

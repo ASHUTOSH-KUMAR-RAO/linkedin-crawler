@@ -1,0 +1,13 @@
+{
+  "name": "@lre/enrichment",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "@lre/discovery": "1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

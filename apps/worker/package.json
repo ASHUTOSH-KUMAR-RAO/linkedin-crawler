@@ -1,0 +1,29 @@
+{
+  "name": "@lre/worker",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@lre/database": "1.0.0",
+    "@lre/discovery": "1.0.0",
+    "@lre/enrichment": "1.0.0",
+    "@lre/queue": "1.0.0",
+    "@lre/verification": "1.0.0",
+    "bullmq": "^5.12.12",
+    "dotenv": "^17.4.2",
+    "ioredis": "^5.4.1",
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}

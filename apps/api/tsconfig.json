@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@lre/database": ["../../packages/database/src"],
+      "@lre/queue": ["../../packages/queue/src"],
+      "@lre/export": ["../../packages/export/src"],
+      "@lre/discovery": ["../../packages/discovery/src"],
+      "@lre/enrichment": ["../../packages/enrichment/src"],
+      "@lre/verification": ["../../packages/verification/src"]
+    }
+  },
+  "include": ["src", "../../packages/*/src"]
+}

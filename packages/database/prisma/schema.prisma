@@ -1,0 +1,170 @@
+// Lead Research Engine - Database Schema
+// Normalized schema per spec section 9.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobMode {
+  QUICK
+  DEEP
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  PARTIAL
+  FAILED
+  CANCELLED
+}
+
+enum ContactStatus {
+  UNKNOWN
+  FOUND
+  VERIFIED
+  UNAVAILABLE
+}
+
+enum SourceType {
+  SEARCH_ENGINE
+  PUBLIC_WEB
+  LINKEDIN_PUBLIC
+  COMPANY_WEBSITE
+  ENRICHMENT_API
+  DEMO
+  OTHER
+}
+
+model ResearchJob {
+  id              String    @id @default(uuid())
+  query           String
+  mode            JobMode
+  status          JobStatus @default(PENDING)
+  requestedCount  Int       @default(60) @map("requested_count")
+  foundCount      Int       @default(0) @map("found_count")
+  errorMessage    String?   @map("error_message")
+  progressStage   String?   @map("progress_stage")
+  progressPercent Int       @default(0) @map("progress_percent")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  startedAt       DateTime? @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+
+  results ResearchResult[]
+
+  @@map("research_jobs")
+}
+
+model Person {
+  id          String   @id @default(uuid())
+  name        String
+  jobTitle    String?  @map("job_title")
+  location    String?
+  linkedinUrl String?  @unique @map("linkedin_url")
+  isDemo      Boolean  @default(false) @map("is_demo")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  companies      PersonCompany[]
+  contactData    ContactData?
+  socialProfiles SocialProfile[]
+  results        ResearchResult[]
+  sources        Source[]
+
+  @@index([name])
+  @@map("people")
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  website   String?
+  industry  String?
+  location  String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  people PersonCompany[]
+
+  @@unique([name, website])
+  @@index([name])
+  @@map("companies")
+}
+
+model PersonCompany {
+  personId     String   @map("person_id")
+  companyId    String   @map("company_id")
+  relationship String?  // e.g. "Founder", "CEO", "Employee"
+  current      Boolean  @default(true)
+
+  person  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@id([personId, companyId])
+  @@map("person_companies")
+}
+
+model ContactData {
+  id          String        @id @default(uuid())
+  personId    String        @unique @map("person_id")
+  email       String?
+  phone       String?
+  emailStatus ContactStatus @default(UNKNOWN) @map("email_status")
+  phoneStatus ContactStatus @default(UNKNOWN) @map("phone_status")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@map("contact_data")
+}
+
+model SocialProfile {
+  id         String   @id @default(uuid())
+  personId   String   @map("person_id")
+  platform   String   // "twitter", "facebook", "instagram", "github", etc.
+  profileUrl String   @map("profile_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, platform])
+  @@map("social_profiles")
+}
+
+model ResearchResult {
+  id               String   @id @default(uuid())
+  jobId            String   @map("job_id")
+  personId         String   @map("person_id")
+  keyword          String?  // the query fragment this person matched on
+  relevanceScore   Int      @map("relevance_score")
+  confidenceScore  Int      @map("confidence_score")
+  relevanceReasons String?  @map("relevance_reasons") // JSON string explaining score
+  confidenceReasons String? @map("confidence_reasons")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  job    ResearchJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  person Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, personId])
+  @@index([jobId])
+  @@map("research_results")
+}
+
+model Source {
+  id            String     @id @default(uuid())
+  personId      String     @map("person_id")
+  sourceType    SourceType @map("source_type")
+  sourceUrl     String?    @map("source_url")
+  sourceStatus  String     @default("ok") @map("source_status") // ok | blocked | error | not_found
+  discoveredAt  DateTime   @default(now()) @map("discovered_at")
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@map("sources")
+}
