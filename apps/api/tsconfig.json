@@ -10,15 +10,17 @@
     "resolveJsonModule": true,
     "declaration": false,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": "../../",
+    "rootDir": "../../",
     "paths": {
-      "@lre/database": ["../../packages/database/src"],
-      "@lre/queue": ["../../packages/queue/src"],
-      "@lre/export": ["../../packages/export/src"],
-      "@lre/discovery": ["../../packages/discovery/src"],
-      "@lre/enrichment": ["../../packages/enrichment/src"],
-      "@lre/verification": ["../../packages/verification/src"]
+      "@lre/database": ["packages/database/src"],
+      "@lre/queue": ["packages/queue/src"],
+      "@lre/export": ["packages/export/src"],
+      "@lre/discovery": ["packages/discovery/src"],
+      "@lre/enrichment": ["packages/enrichment/src"],
+      "@lre/verification": ["packages/verification/src"]
     }
   },
-  "include": ["src", "../../packages/*/src"]
+  "include": ["src/**/*", "../../packages/*/src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
