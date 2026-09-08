@@ -42,4 +42,3 @@ function getResearchQueue() {
 function progressChannel(jobId) {
     return `research-progress:${jobId}`;
 }
-//# sourceMappingURL=index.js.map

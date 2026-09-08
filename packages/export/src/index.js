@@ -61,4 +61,3 @@ function exportFilename(mode, ext) {
     const date = new Date().toISOString().slice(0, 10);
     return `lead-research-${mode}-${date}.${ext}`;
 }
-//# sourceMappingURL=index.js.map

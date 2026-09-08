@@ -24,4 +24,3 @@ if (process.env.NODE_ENV !== "production") {
     global.__lrePrisma = exports.prisma;
 }
 __exportStar(require("../generated/client"), exports);
-//# sourceMappingURL=index.js.map
